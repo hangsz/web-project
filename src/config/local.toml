@@ -1,0 +1,10 @@
+title = "Local配置"
+app_name = "xxx"
+debug = true
+
+
+[telemetry]
+log.level = "DEBUG"
+log.filename = "app.log"
+metric.endpoint = "http://localhost:4317"
+trace.endpoint = "http://localhost:4317"

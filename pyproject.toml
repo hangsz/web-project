@@ -1,0 +1,20 @@
+[project]
+name = "web-project"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "opentelemetry-api>=1.39.1",
+    "opentelemetry-exporter-otlp>=1.39.1",
+    "starlette>=0.50.0",
+]
+
+
+[tool.ruff]
+line-length = 120
+indent-width = 4
+
+[tool.ruff.lint]
+select = ["C", "E", "F", "W"]
+ignore = ["C901", "F401", "F403", "E501"]
