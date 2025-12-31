@@ -15,7 +15,7 @@ class TelemetryMiddleware(object):
         if scope["type"] != "http":
             return await self.app(scope, receive, send)
 
-        headers = dict(scope.get("headers"), {})
+        headers = dict(scope.get("headers", {}))
         if "traceparent" in headers:
             carrier = {"traceparent": headers["traceparent"]}
             ctx = TraceContextTextMapPropagator().extract(carrier)

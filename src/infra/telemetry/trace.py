@@ -14,7 +14,7 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.trace import StatusCode
 
-from src.config import CONF
+from src.config import CONF, ENV
 
 from .log import logger
 
@@ -23,7 +23,12 @@ conf = CONF["telemetry"]["trace"]
 
 def new_trace_provider(endpoint: str = None) -> TracerProvider:
     resource = Resource(
-        attributes={SERVICE_NAME: conf["app_name"], HOST_NAME: socket.gethostname(), PROCESS_PID: os.getpid()}
+        attributes={
+            SERVICE_NAME: CONF["app_name"],
+            HOST_NAME: socket.gethostname(),
+            PROCESS_PID: os.getpid(),
+            "env": ENV,
+        }
     )
     endpoint = endpoint or conf["endpoint"]
     exporter = OTLPSpanExporter(endpoint=endpoint, insecure=True)
@@ -32,7 +37,7 @@ def new_trace_provider(endpoint: str = None) -> TracerProvider:
     return provider
 
 
-tracer = new_trace_provider().get_tracer(conf["app_name"])
+tracer = new_trace_provider().get_tracer(CONF["app_name"])
 
 
 def get_trace_id() -> str:

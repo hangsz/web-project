@@ -41,6 +41,6 @@ class TraceFormatter(logging.Formatter):
 FORMAT = "%(asctime)s %(levelname)s [%(filename)s %(lineno)d] [%(trace_id)s %(span_id)s] %(message)s"
 handler.setFormatter(TraceFormatter(FORMAT))
 
-logger = logging.getLogger(conf["app_name"])
+logger = logging.getLogger(CONF["app_name"])
 logger.addHandler(handler)
 logger.propagate = False

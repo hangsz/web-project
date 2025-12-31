@@ -5,9 +5,7 @@
 import os
 import tomllib
 
-ENV = os.getenv("ENV", "LOCAL")
-
-
+ENV = os.getenv("APP_ENV", "LOCAL")
 CONF = None
 
 
@@ -30,7 +28,7 @@ def init():
         case _:
             raise ValueError(f"unknown ENV: {ENV}")
 
-    with open(os.path.join(os.path.dirname(__file__), filename), "r") as f:
+    with open(os.path.join(os.path.dirname(__file__), filename), "rb") as f:
         CONF = tomllib.load(f)
 
     print("config init end")

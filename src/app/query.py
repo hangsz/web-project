@@ -33,7 +33,7 @@ async def query(params: dict) -> tuple[dict | list, str | None]:
         return await _query(params)
     except Exception as e:
         logger.exception(traceback.format_exc())
-        COUNTER.add(1, {"method": params["method"], "code": 1, "hostname": HOSTNAME, "env": ENV})
+        COUNTER.add(1, {"method": params["method"], "code": 1})
         return None, repr(e)
 
 
@@ -67,6 +67,6 @@ async def _query(fn, params: dict) -> tuple[dict | list, str | None]:
 
         service.admin_request_create(req)
 
-        COUNTER.add(1, attributes={"method": params["method"], "code": code, "hostname": HOSTNAME, "env": ENV})
+        COUNTER.add(1, attributes={"method": params["method"], "code": code})
 
     return result

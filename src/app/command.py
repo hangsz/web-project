@@ -27,7 +27,6 @@ pool = ThreadPoolExecutor(thread_name_prefix="background", max_workers=os.cpu_co
 commands = {
     "admin.request.create": service.admin_request_create,
     "admin.request.update": service.admin_request_update,
-    "admin.request.delete": service.admin_request_delete,
 }
 
 
@@ -62,7 +61,7 @@ async def command(params: dict, data: dict | list) -> tuple[dict | list, str | N
             return await _command(fn, params, data)
     except Exception as e:
         logger.exception(traceback.format_exc())
-        COUNTER.add(1, {"method": params["method"], "code": 1, "hostname": HOSTNAME, "env": ENV})
+        COUNTER.add(1, {"method": params["method"], "code": 1})
         return None, repr(e)
 
 
@@ -86,7 +85,7 @@ async def _command(fn, params: dict, data: dict | list) -> tuple[dict | list, st
         {{"uuid": params["_reqid"]}, {"code": code, "message": message, "status": "COMPLETED"}}
     )
 
-    COUNTER.add(1, attributes={"method": params["method"], "code": code, "hostname": HOSTNAME, "env": ENV})
+    COUNTER.add(1, attributes={"method": params["method"], "code": code})
 
     return result
 
@@ -126,6 +125,6 @@ async def background_execute(ctx, fn, params: dict, data: dict | list) -> tuple[
         {{"uuid": params["_reqid"]}, {"code": code, "message": message, "status": "COMPLETED"}}
     )
 
-    COUNTER.add(1, attributes={"method": params["method"], "code": code, "hostname": HOSTNAME, "env": ENV})
+    COUNTER.add(1, attributes={"method": params["method"], "code": code})
 
     return result

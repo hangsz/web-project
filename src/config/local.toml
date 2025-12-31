@@ -1,5 +1,6 @@
 title = "Local配置"
 app_name = "xxx"
+sql_driver = "sqlite"
 debug = true
 
 
@@ -8,3 +9,15 @@ log.level = "DEBUG"
 log.filename = "app.log"
 metric.endpoint = "http://localhost:4317"
 trace.endpoint = "http://localhost:4317"
+
+[sqlite]
+db = "/test.db"
+
+
+[mysql]
+host = ""
+port = 330
+db = "test"
+user = ""
+passwd = ""
+charset = ""

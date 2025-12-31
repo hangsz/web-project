@@ -16,7 +16,7 @@ from opentelemetry.sdk.metrics.export import (
 )
 from opentelemetry.sdk.resources import HOST_NAME, PROCESS_PID, SERVICE_NAME, Resource
 
-from src.config import CONF
+from src.config import CONF, ENV
 
 from .log import logger
 from .trace import observe
@@ -31,20 +31,27 @@ def new_meter_provider(
     parallel_exporter_enabled: bool = False,
 ) -> MeterProvider:
     resource = Resource(
-        attributes={SERVICE_NAME: conf["app_name"], HOST_NAME: socket.gethostname(), PROCESS_PID: os.getpid()}
+        attributes={
+            SERVICE_NAME: CONF["app_name"],
+            HOST_NAME: socket.gethostname(),
+            PROCESS_PID: os.getpid(),
+            "env": ENV,
+        }
     )
     endpoint = endpoint or conf["endpoint"]
-
     if not parallel_exporter_enabled:
-        exporter = OTLPMetricExporter(endpoint=endpoint, insecure=True)
+        exporter = OTLPMetricExporter(endpoint=endpoint)
     else:
-        exporter = ParallelOTLPMetricExporter(endpoint=endpoint, insecure=True)
+        exporter = ParallelOTLPMetricExporter(endpoint=endpoint)
     reader = PeriodicExportingMetricReader(exporter, export_interval_millis=interval, export_timeout_millis=timeout)
     provider = MeterProvider(resource=resource, metric_readers=[reader])
     return provider
 
 
 class ParallelOTLPMetricExporter(OTLPMetricExporter):
+    def __init__(self, endpoint: str):
+        super().__init__(endpoint, headers={"Content-Type": "application/x-protobuf"})
+
     def export(self, metrics_data: MetricsData, timeout_millis: float = 10_000, **kwargs) -> MetricExportResult:
         err = self.export_parallel(metrics_data, timeout_millis, **kwargs)
         return MetricExportResult.FAILURE if err else MetricExportResult.SUCCESS
@@ -127,4 +134,4 @@ class ParallelOTLPMetricExporter(OTLPMetricExporter):
         return f"{errs}" if errs else None
 
 
-meter = new_meter_provider().get_meter(conf["app_name"])
+meter = new_meter_provider().get_meter(CONF["app_name"])
